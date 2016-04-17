@@ -91,11 +91,7 @@ marker.on('dragend', function(event){
 				marker = event.target;
 				var position = marker.getLatLng(); 
 				map.panTo(new L.LatLng(position.lat, position.lng));
-				var utm = proj4('EPSG:4326', 'EPSG:26911', [position.lng,position.lat]);
-				form.easting.value = Math.round (utm[0] * 10) / 10;
-				form.northing.value  = Math.round (utm[1] * 10) / 10;
-				});		
-				
+			
 function zoomTo() {	
 	position = marker.getLatLng();
 	var utm = proj4('EPSG:4326', 'EPSG:26911', [position.lng,position.lat]);
