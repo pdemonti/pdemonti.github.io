@@ -4,7 +4,7 @@ L.Control.MousePosition = L.Control.extend({
     separator: ' : ',
     emptyString: 'Unavailable',
     lngFirst: false,
-    numDigits: 1,
+    numDigits: 5,
     lngFormatter: undefined,
     latFormatter: undefined,
     prefix: ""
