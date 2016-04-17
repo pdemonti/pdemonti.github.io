@@ -11,21 +11,25 @@
 <body>
 <div id="map" style="width: 500px; height: 450px"></div>
  <form name="form" method="get" action="">
-      <input name="easting" type="hidden" id="easting" value="">
+      <input type="hidden" name="easting" id="easting" value="">
      <input type="hidden"  name="northing" id="northing" value="">
- </form>
+     <input type="hidden"  name="wkt" id="wkt" value="">
+</form>
 <script src="leaflet-src.js"></script>
 <script src="proj4.js"></script>
 <script src="proj4leaflet.js"></script>
 <script src="L.Control.MousePosition.js"></script>
 <script src="kml.js"></script>
 <script src="leaflet-providers.js"></script>
+<script src="terraformer.min.js"></script>
+<script src="terraformer-wkt-parser.min.js"></script>
 <script>
 var easting;
 var northing;
 var iconDrag = true;
 var marker; 
 var thepoint;
+var thelayer;
 ///////////////////////////// 
 proj4.defs([
   [
@@ -80,17 +84,6 @@ var trails = new L.KML("hike.kml", {async: true});
 var cprmm = new L.KML("CPRmm.kml", {async: true});
 var tchwpts = new L.KML("TCHwpts.kml", {async: true});
 //define marker
-var redIcon = L.Icon.extend({
-    options: {
-        iconUrl: 'marker-icon.png',
-		shadowUrl: 'marker-icon-shadow.png',
-		iconSize:     [38, 95],
-		shadowSize:   [50, 64],
-		iconAnchor:   [22, 94],
-		shadowAnchor: [4, 62],
-		popupAnchor:  [-3, -76]
-    }
-});
 /////////////////////////
 
 var marker = new L.Marker([easting,northing],{draggable: iconDrag});
@@ -106,26 +99,36 @@ marker.on('dragend', function(event){
 function zoomTo() {	
 };
 
-
-
 function SetJavascriptVars(){
 		/// get the new coords from the boxes
+		wkt = form.wkt.value;
 		easting = form.easting.value;
 		northing = form.northing.value;
-		///convet them
-		var latlong = proj4('EPSG:26911', 'EPSG:4326', [easting,northing]);
-		x = latlong[0];
-		y = latlong[1];
-		thepoint = new L.LatLng(y, x);
-		//the point already exists so lets move it.
+		///if wkt exists use it, else use lat long else use UTMs
+		if (wkt.length > 0){
+			//if there are markers clear them
+			marker.clearLayers();
+			thelayer.clearLayers();
+			//alert(wkt);
+			var geojson = Terraformer.WKT.parse(wkt);
+            // Create a geojson layer with our new geojson object
+            var thelayer = L.geoJson(geojson, {}).addTo(map);
+            // get a geojson bounding box xmin, ymin, xmax, ymax
+            var bounds = geojson.bbox();
+            // fit the map tp the bounds of the fire.
+            map.fitBounds([ [bounds[1], bounds[0]], [bounds[3], bounds[2]] ]);	
+		}else{
+			var latlong = proj4('EPSG:26911', 'EPSG:4326', [easting,northing]);
+			x = latlong[0];
+			y = latlong[1];
+			thepoint = new L.LatLng(y, x);
+			//the point already exists so lets move it.
 			marker.setLatLng(thepoint);
 			marker.addTo(map);
 			marker.update()
-			map.panTo(new L.LatLng(y, x));			
-		 };
-
-
-
+			map.panTo(new L.LatLng(y, x));	
+		};	
+ };
 // initialize the map
 /////////////////////////////////
 	////var map = L.map('map').setView([y,x], 9);
@@ -140,14 +143,14 @@ function onMapClick(e) {
 			marker.setLatLng(e.latlng,{draggable: iconDrag});
 			marker.addTo(map);
 			marker.update()
-			map.panTo(new L.LatLng(y, x));	
-
 			//////////////////
 			//end on drag end update	
  			var position = marker.getLatLng(); 
 			var utm = proj4('EPSG:4326', 'EPSG:26911', [position.lng,position.lat]);
 			form.easting.value = Math.round (utm[0] * 10) / 10;
 			form.northing.value  = Math.round (utm[1] * 10) / 10; 
+			map.panTo(position);	
+
 };
 
 function updateMarkerUtm(){
@@ -157,7 +160,6 @@ function updateMarkerUtm(){
 	form.northing.value  = Math.round (utm[1] * 10) / 10;
 };
 // end on mapClick
-
 map.on('click', onMapClick);
 L.control.mousePosition().addTo(map);
 //track.on("loaded", function(e) { map.fitBounds(e.target.getBounds()); });
@@ -169,9 +171,7 @@ var baseMaps = {
 	"Satellite": Esri_WorldImagery,
 	"Esri_Topo": Esri_WorldTopoMap
 };
-var overlayMaps = {"Park Boundary": track, "CPR Mile Markers": cprmm, "TCH Waypoints": tchwpts,
-"Hiking Trails": trails
-};
+var overlayMaps = {"Park Boundary": track, "CPR Mile Markers": cprmm, "TCH Waypoints": tchwpts, "Hiking Trails": trails};
 L.control.layers(baseMaps,overlayMaps).addTo(map);
 
 </script>  
