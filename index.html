@@ -76,7 +76,7 @@ var Esri_WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/
 
 
 //// define KML layer
-var track = new L.KML("Park_boundary.kml", {async: true});
+var boundary = new L.KML("Park_boundary.kml", {async: true});
 //define marker
 /////////////////////////
 
@@ -129,7 +129,7 @@ function SetJavascriptVars(){
 	var map = L.map('map', {
 		center: [y,x],
 		zoom: 8,
-		layers: [Esri_WorldTopoMap]
+		layers: [Esri_WorldTopoMap, boundary]
 	});
 /////////////////
 
@@ -165,7 +165,7 @@ var baseMaps = {
 	"Satellite": Esri_WorldImagery,
 	"Esri_Topo": Esri_WorldTopoMap
 };
-var overlayMaps = {"Park Boundary": track};
+var overlayMaps = {"Park Boundary": boundary};
 L.control.layers(baseMaps,overlayMaps).addTo(map);
 
 </script>  
