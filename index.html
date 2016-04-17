@@ -96,7 +96,18 @@ marker.on('dragend', function(event){
 				var latlong = proj4('EPSG:4326', [position.lng,position.lat]);
 				form.latitude.value = latlong[0];
 				form.longitude.value  = latlong[1];
-				});
+	 			});
+var popup = L.popup();
+
+function onMapClick(e) {
+    popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(mymap);
+}
+
+mymap.on('click', onMapClick);			
+	
 				
 function zoomTo() {	
 };
