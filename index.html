@@ -76,7 +76,18 @@ var Esri_WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/
 
 //define marker
 /////////////////////////
-
+var redIcon = L.Icon.extend({
+    options: {
+        iconUrl: 'marker-icon.png',
+		shadowUrl: 'marker-icon-shadow.png',
+		iconSize:     [38, 95],
+		shadowSize:   [50, 64],
+		iconAnchor:   [22, 94],
+		shadowAnchor: [4, 62],
+		popupAnchor:  [-3, -76]   
+	}
+});
+		
 var marker = new L.Marker([latitude,longitude],{draggable: iconDrag});
 marker.on('dragend', function(event){
 				marker = event.target;
@@ -96,19 +107,7 @@ function SetJavascriptVars(){
 		latitude = form.latitude.value;
 		longitude = form.longitude.value;
 		///if wkt exists use it, else use lat long else use UTMs
-		if (wkt.length > 0){
-			//if there are markers clear them
-			marker.clearLayers();
-			thelayer.clearLayers();
-			//alert(wkt);
-			var geojson = Terraformer.WKT.parse(wkt);
-            // Create a geojson layer with our new geojson object
-            var thelayer = L.geoJson(geojson, {}).addTo(map);
-            // get a geojson bounding box xmin, ymin, xmax, ymax
-            var bounds = geojson.bbox();
-            // fit the map tp the bounds of the fire.
-            map.fitBounds([ [bounds[1], bounds[0]], [bounds[3], bounds[2]] ]);	
-		}else{
+		if (wkt = ""){
 			var latlong = proj4('EPSG:4326', [latitude,longitude]);
 			x = latlong[0];
 			y = latlong[1];
@@ -118,6 +117,14 @@ function SetJavascriptVars(){
 			marker.addTo(map);
 			marker.update()
 			map.panTo(new L.LatLng(y, x));	
+		}else{
+			var geojson = Terraformer.WKT.parse(wkt);
+            // Create a geojson layer with our new geojson object
+            var layer = L.geoJson(geojson, {}).addTo(map);
+            // get a geojson bounding box xmin, ymin, xmax, ymax
+            var bounds = geojson.bbox();
+            // fit the map tp the bounds of the fire.
+            map.fitBounds([ [bounds[1], bounds[0]], [bounds[3], bounds[2]] ]);
 		};	
  };
 // initialize the map
