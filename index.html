@@ -77,9 +77,6 @@ var Esri_WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/
 
 //// define KML layer
 var track = new L.KML("MRG-bndy-dd.kml", {async: true});
-var trails = new L.KML("hike.kml", {async: true});
-var cprmm = new L.KML("CPRmm.kml", {async: true});
-var tchwpts = new L.KML("TCHwpts.kml", {async: true});
 //define marker
 /////////////////////////
 
@@ -168,7 +165,7 @@ var baseMaps = {
 	"Satellite": Esri_WorldImagery,
 	"Esri_Topo": Esri_WorldTopoMap
 };
-var overlayMaps = {"Park Boundary": track, "CPR Mile Markers": cprmm, "TCH Waypoints": tchwpts, "Hiking Trails": trails};
+var overlayMaps = {"Park Boundary": track};
 L.control.layers(baseMaps,overlayMaps).addTo(map);
 
 </script>  
