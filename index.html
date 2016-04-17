@@ -63,6 +63,15 @@ proj4.defs([
 		noWrap: true,
 		attribution: "Toporama"
 	});
+/////////////////define map layers
+	// Toporama WMS
+	var Toporama = L.tileLayer.wms("http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", {
+		layers: 'WMS-toporama',
+		format: 'image/png',
+		transparent: false,
+		noWrap: true,
+		attribution: "Toporama"
+	});
 // define a maplayer
 
 var Esri_WorldTopoMap = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
@@ -91,9 +100,12 @@ marker.on('dragend', function(event){
 				marker = event.target;
 				var position = marker.getLatLng(); 
 				map.panTo(new L.LatLng(position.lat, position.lng));
-			
+				var utm = proj4('EPSG:4326', 'EPSG:26911', [position.lng,position.lat]);
+				form.easting.value = Math.round (utm[0] * 10) / 10;
+				form.northing.value  = Math.round (utm[1] * 10) / 10;
+				});		
+				
 function zoomTo() {	
-	position = marker.getLatLng();
 };
 
 function SetJavascriptVars(){
@@ -131,8 +143,8 @@ function SetJavascriptVars(){
 	////var map = L.map('map').setView([y,x], 9);
 	var map = L.map('map', {
 		center: [y,x],
-		zoom: 7,
-		layers: [Esri_WorldTopoMap]
+		zoom: 8,
+		layers: [Esri_WorldTopoMap, trails]
 	});
 /////////////////
 
@@ -143,14 +155,19 @@ function onMapClick(e) {
 			//////////////////
 			//end on drag end update	
  			var position = marker.getLatLng(); 
+			var utm = proj4('EPSG:4326', 'EPSG:26911', [position.lng,position.lat]);
+			form.easting.value = Math.round (utm[0] * 10) / 10;
+			form.northing.value  = Math.round (utm[1] * 10) / 10; 
 			map.panTo(position);	
 
 };
 
 function updateMarkerUtm(){
 	position = marker.getLatLng();
+	var utm = proj4('EPSG:4326', 'EPSG:26911', [position.lng,position.lat]);
+	form.easting.value = Math.round (utm[0] * 10) / 10;
+	form.northing.value  = Math.round (utm[1] * 10) / 10;
 };
-	
 // end on mapClick
 map.on('click', onMapClick);
 L.control.mousePosition().addTo(map);
