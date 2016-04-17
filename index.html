@@ -97,18 +97,7 @@ marker.on('dragend', function(event){
 				form.latitude.value = latlong[0];
 				form.longitude.value  = latlong[1];
 	 			});
-var popup = L.popup();
 
-function onMapClick(e) {
-    popup
-        .setLatLng(e.latlng)
-        .setContent("You clicked the map at " + e.latlng.toString())
-        .openOn(mymap);
-}
-
-mymap.on('click', onMapClick);			
-	
-				
 function zoomTo() {	
 };
 
