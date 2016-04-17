@@ -24,9 +24,9 @@ L.Control.MousePosition = L.Control.extend({
 
   _onMouseMove: function (e) {
 	var latlon = e.latlng;
-	var utm = proj4('EPSG:4326', 'EPSG:26911', [latlon.lng,latlon.lat]);
-    var lng = this.options.lngFormatter ? this.options.lngFormatter(e.latlng.lng) : L.Util.formatNum(utm[0], this.options.numDigits);
-	var lat = this.options.latFormatter ? this.options.latFormatter(e.latlng.lat) : L.Util.formatNum(utm[1], this.options.numDigits);
+	var latlong = proj4('EPSG:4326', [latlon.lng,latlon.lat]);
+    var lng = this.options.lngFormatter ? this.options.lngFormatter(e.latlng.lng) : L.Util.formatNum(latlong[0], this.options.numDigits);
+	var lat = this.options.latFormatter ? this.options.latFormatter(e.latlng.lat) : L.Util.formatNum(latlong[1], this.options.numDigits);
     var value = this.options.lngFirst ? lng + this.options.separator + lat : lat + this.options.separator + lng;
     var prefixAndValue = this.options.prefix + ' ' + value;
     this._container.innerHTML = prefixAndValue;
