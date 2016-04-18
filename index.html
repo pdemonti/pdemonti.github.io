@@ -92,7 +92,7 @@ var marker = new L.Marker([latitude,longitude],{draggable: iconDrag});
 marker.on('dragend', function(event){
 				marker = event.target;
 				var position = marker.getLatLng(); 
-				map.panTo(new L.LatLng(position.lat, position.long));
+				map.panTo(new L.LatLng(position.lat, position.lng));
 				var latlong = proj4('EPSG:4326', [position.lng,position.lat]);
 				form.latitude.value = latlong[0];
 				form.longitude.value  = latlong[1];
