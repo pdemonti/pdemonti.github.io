@@ -92,7 +92,7 @@ var marker = new L.Marker([latitude,longitude],{draggable: iconDrag});
 marker.on('dragend', function(event){
 				marker = event.target;
 				var position = marker.getLatLng(); 
-				map.panTo(new L.LatLng(position.lat, position.lng));
+				map.panTo(new L.LatLng(position.lat, position.long));
 				var latlong = proj4('EPSG:4326', [position.lat,position.long]);
 				form.latitude.value = latlong[0];
 				form.longitude.value  = latlong[1];
@@ -131,7 +131,7 @@ function SetJavascriptVars(){
 /////////////////////////////////
 	////var map = L.map('map').setView([y,x], 9);
 	var map = L.map('map', {
-		center: [y,x],
+		center: [x,y],
 		zoom: 8,
 		layers: [Esri_WorldTopoMap]
 	});
