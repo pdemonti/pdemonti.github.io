@@ -18,8 +18,6 @@
 <script src="leaflet-providers.js"></script>
 <script src="terraformer.min.js"></script>
 <script src="terraformer-wkt-parser.min.js"></script>
-<script src="leaflet.draw-src.js"></script>
-<script src="leaflet.draw.js"></script>
  <form name="form" method="get" action="">
       <input type="hidden" name="latitude" id="latitude" value="">
      <input type="hidden"  name="longitude" id="longitude" value="">
@@ -173,100 +171,7 @@ var baseMaps = {
 	"Esri_Topo": Esri_WorldTopoMap
 };
 L.control.layers(baseMaps).addTo(map);
-//// DRAW Options ///////////////
-var drawnItems = new L.FeatureGroup();
-map.addLayer(drawnItems);
-var drawControlFull = new L.Control.Draw({
-    edit: {
-        featureGroup: drawnItems
-    }
-});
-var drawControlEditOnly = new L.Control.Draw({
-    edit: {
-        featureGroup: drawnItems
-    },
-    draw: false
-});
-/////////////////////////
 
-////////////////////////////
-map.addControl(drawControlFull);
-map.on('draw:created', function(e) {
-	var layer = e.layer;
-	if(drawnItems && drawnItems.getLayers().length!==0){
-      drawnItems.clearLayers();
-    }           
-    drawnItems.addLayer(layer);   
-	//once something is drawn change interface
-	drawControlFull.removeFrom(map);
-    drawControlEditOnly.addTo(map);	
-	/////
-	var geojson = layer.toGeoJSON();
-	var txt = Terraformer.WKT.convert(geojson.geometry);
-		form.wkt.value = txt;
-		var cds = drawnItems.getBounds().getCenter();
-		form.lat.value = cds.lat;	
-		form.lng.value = cds.lng;
-		var latlong = proj4('EPSG:4326', [cds.lng,cds.lat]);
-		form.latitude.value = latlong[0];
-		form.longitude.value = latlong[1];
-});
-
-map.on('draw:edited', function (e) {
-	var layers = e.layers;
-    layers.eachLayer(function(layer) {
-		var geojson = layer.toGeoJSON();
-		var txt = Terraformer.WKT.convert(geojson.geometry);
-		form.wkt.value = txt;
-		var cds = drawnItems.getBounds().getCenter();
-		form.lat.value = cds.x;	
-		form.lng.value = cds.y;
-		var UTM = proj4('EPSG:4326', 'EPSG:26911', [cds.lng,cds.lat]);
-		form.easting.value = UTM[0];
-		form.northing.value = UTM[1];
-    });	
-});
-
-map.on("draw:deleted", function(e) {	
-	drawControlEditOnly.removeFrom(map);
-	drawControlFull.addTo(map);
-	
-function SetJavascriptVars(){     
-	//update interface
-	drawControlFull.removeFrom(map);
-	drawControlEditOnly.addTo(map);		
-    /// get the new coords from the boxes	
-		wkt = form.wkt.value;
-		latitude = form.latitude.value;
-		longitude = form.longitude.value;
-		///if wkt exists use it, else use lat long else use UTMs
-		if (wkt.length > 0){
-				//if there are markers clear them
-				var geojson = Terraformer.WKT.parse(wkt);
-				var layer = new L.geoJson(geojson, {});
-				drawnItems.addLayer(layer); 
-			if(geojson.type == 'Point'){
-				//Create a geojson layer with our new geojson object
-			}else{
-				//it is a line or polygo				
-			};
-			
-            // Get center of bounds
-			map.fitBounds(layer.getBounds());
-			
-		}else{
-			//else there is no WKT so just show a point based on UTM coord
-			var latlong = proj4('EPSG:4326', [latitude,longitude]);
-			x = latlong[0];
-			y = latlong[1];
-			var layer = new L.marker(new L.LatLng(y, x));
-			//the point already exists so lets move it.
-    		//var layer = latLngToLayerPoint(thepoint);
-    		drawnItems.addLayer(layer);
-			map.panTo(new L.LatLng(y, x));	
-		};		
- };
- 
 </script>  
 </body>
 </html>
