@@ -7,9 +7,14 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="leaflet.css" />
     <link rel="stylesheet" href="L.Control.MousePosition.css" />
-    <link rel="stylesheet" href="leaflet.draw.css" />
 </head>
 <body>
+ <div id="map" style="width: 500px; height: 450px"></div>
+ <form name="form" method="get" action="">
+      <input type="hidden" name="latitude" id="latitude" value="">
+     <input type="hidden"  name="longitude" id="longitude" value="">
+     <input type="hidden"  name="wkt" id="wkt" value="">
+</form>
 <script src="leaflet-src.js"></script>
 <script src="proj4.js"></script>
 <script src="proj4leaflet.js"></script>
@@ -18,12 +23,6 @@
 <script src="leaflet-providers.js"></script>
 <script src="terraformer.min.js"></script>
 <script src="terraformer-wkt-parser.min.js"></script>
- <form name="form" method="get" action="">
-      <input type="hidden" name="latitude" id="latitude" value="">
-     <input type="hidden"  name="longitude" id="longitude" value="">
-     <input type="hidden"  name="wkt" id="wkt" value="">
-</form>
-<div id="map" style="width: 500px; height: 450px"></div>
 <script>
 var latitude;
 var longitude;
@@ -149,7 +148,6 @@ function onMapClick(e) {
 			form.latitude.value = latlong[0];
 			form.longitude.value  = latlong[1]; 
 			map.panTo(position);	
-
 };
 
 function updateMarkerUtm(){
