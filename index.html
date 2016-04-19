@@ -171,6 +171,42 @@ var baseMaps = {
 };
 L.control.layers(baseMaps).addTo(map);
 
+function SetJavascriptVars(){     
+	//update interface
+	drawControlFull.removeFrom(map);
+	drawControlEditOnly.addTo(map);		
+    /// get the new coords from the boxes	
+		wkt = form.wkt.value;
+		latitude = form.latitude.value;
+		longitude = form.longitude.value;
+		///if wkt exists use it, else use lat long else use UTMs
+		if (wkt.length > 0){
+				//if there are markers clear them
+				var geojson = Terraformer.WKT.parse(wkt);
+				var layer = new L.geoJson(geojson, {});
+				drawnItems.addLayer(layer); 
+			if(geojson.type == 'Point'){
+				//Create a geojson layer with our new geojson object
+			}else{
+				//it is a line or polygo				
+			};
+			
+            // Get center of bounds
+			map.fitBounds(layer.getBounds());
+			
+		}else{
+			//else there is no WKT so just show a point based on UTM coord
+			var latlong = proj4('EPSG:4326', [latitude,longitude]);
+			x = latlong[0];
+			y = latlong[1];
+			var layer = new L.marker(new L.LatLng(y, x));
+			//the point already exists so lets move it.
+    		//var layer = latLngToLayerPoint(thepoint);
+    		drawnItems.addLayer(layer);
+			map.panTo(new L.LatLng(y, x));	
+		};		
+ };
+ 
 </script>  
 </body>
 </html>
