@@ -170,7 +170,64 @@ var baseMaps = {
 	"Esri_Topo": Esri_WorldTopoMap
 };
 L.control.layers(baseMaps).addTo(map);
+//// DRAW Options ///////////////
+var drawnItems = new L.FeatureGroup();
+map.addLayer(drawnItems);
+var drawControlFull = new L.Control.Draw({
+    edit: {
+        featureGroup: drawnItems
+    }
+});
+var drawControlEditOnly = new L.Control.Draw({
+    edit: {
+        featureGroup: drawnItems
+    },
+    draw: false
+});
+/////////////////////////
 
+////////////////////////////
+map.addControl(drawControlFull);
+map.on('draw:created', function(e) {
+	var layer = e.layer;
+	if(drawnItems && drawnItems.getLayers().length!==0){
+      drawnItems.clearLayers();
+    }           
+    drawnItems.addLayer(layer);   
+	//once something is drawn change interface
+	drawControlFull.removeFrom(map);
+    drawControlEditOnly.addTo(map);	
+	/////
+	var geojson = layer.toGeoJSON();
+	var txt = Terraformer.WKT.convert(geojson.geometry);
+		form.wkt.value = txt;
+		var cds = drawnItems.getBounds().getCenter();
+		form.lat.value = cds.lat;	
+		form.lng.value = cds.lng;
+		var latlong = proj4('EPSG:4326', [cds.lng,cds.lat]);
+		form.latitude.value = latlong[0];
+		form.longitude.value = latlong[1];
+});
+
+map.on('draw:edited', function (e) {
+	var layers = e.layers;
+    layers.eachLayer(function(layer) {
+		var geojson = layer.toGeoJSON();
+		var txt = Terraformer.WKT.convert(geojson.geometry);
+		form.wkt.value = txt;
+		var cds = drawnItems.getBounds().getCenter();
+		form.lat.value = cds.x;	
+		form.lng.value = cds.y;
+		var UTM = proj4('EPSG:4326', 'EPSG:26911', [cds.lng,cds.lat]);
+		form.easting.value = UTM[0];
+		form.northing.value = UTM[1];
+    });	
+});
+
+map.on("draw:deleted", function(e) {	
+	drawControlEditOnly.removeFrom(map);
+	drawControlFull.addTo(map);
+	
 function SetJavascriptVars(){     
 	//update interface
 	drawControlFull.removeFrom(map);
