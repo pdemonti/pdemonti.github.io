@@ -30,24 +30,15 @@ var iconDrag = true;
 var marker; 
 var thepoint;
 var thelayer;
-///////////////////////////// 
-proj4.defs([
-  [
-    'EPSG:4326',
-    '+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees'],
-  [
-    'EPSG:3978',
-    '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs']
-	]);
+
 ///////////////////////	
 	if (form.latitude.value == "") {
 	      	x = -139.6;
 	        y = 69.1;
-		//easting =442072;
-		//northing = 5667796;
+
 	}else{
 		//There are values in the boxes lets convert to DD and add this to the map and zoom to.
-		var latlong = proj4('EPSG:4326', [form.latitude.value,form.longitude.value]);
+		var latlong = form.latitude.value,form.longitude.value;
 		x = latlong[0];
 		y = latlong[1]; 
 	};
@@ -93,10 +84,7 @@ marker.on('dragend', function(event){
 				marker = event.target;
 				var position = marker.getLatLng(); 
 				map.panTo(new L.LatLng(position.lat, position.lng));
-				var latlong = proj4('EPSG:4326', [position.lng,position.lat]);
-				form.latitude.value = latlong[0];
-				form.longitude.value  = latlong[1];
-	 			});
+			
 
 function zoomTo() {	
 };
@@ -108,7 +96,7 @@ function SetJavascriptVars(){
 		longitude = form.longitude.value;
 		///if wkt exists use it, else use lat long else use UTMs
 		if (wkt = ""){
-			var latlong = proj4('EPSG:4326', [latitude,longitude]);
+			var latlong = latitude,longitude;
 			x = latlong[0];
 			y = latlong[1];
 			thepoint = new L.LatLng(y, x);
@@ -117,15 +105,7 @@ function SetJavascriptVars(){
 			marker.addTo(map);
 			marker.update()
 			map.panTo(new L.LatLng(y, x));	
-		}else{
-			var geojson = Terraformer.WKT.parse(wkt);
-            // Create a geojson layer with our new geojson object
-            var layer = L.geoJson(geojson, {}).addTo(map);
-            // get a geojson bounding box xmin, ymin, xmax, ymax
-            var bounds = geojson.bbox();
-            // fit the map tp the bounds of the fire.
-            map.fitBounds([ [bounds[1], bounds[0]], [bounds[3], bounds[2]] ]);
-		};	
+		
  };
 // initialize the map
 /////////////////////////////////
@@ -144,18 +124,9 @@ function onMapClick(e) {
 			//////////////////
 			//end on drag end update	
  			var position = marker.getLatLng(); 
-			var latlong = proj4('EPSG:4326', [position.lng,position.lat]);
-			form.latitude.value = latlong[0];
-			form.longitude.value  = latlong[1]; 
 			map.panTo(position);	
 };
 
-function updateMarkerUtm(){
-	position = marker.getLatLng();
-	var latlong = proj4('EPSG:4326', [position.lng,position.lat]);
-	form.latitude.value = latlong[0];
-	form.longitude.value  = latlong[1];
-};
 // end on mapClick
 map.on('click', onMapClick);
 L.control.mousePosition().addTo(map);
