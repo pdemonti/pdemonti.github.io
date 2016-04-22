@@ -108,28 +108,27 @@ function SetJavascriptVars(){
 		latitude = form.latitude.value;
 		longitude = form.longitude.value;
 			///if wkt exists use it, else use lat long else use UTMs
-		if (wkt.length > 0){
-			//if there are markers clear them
-			marker.clearLayers();
-			thelayer.clearLayers();
-			//alert(wkt);
-			var geojson = Terraformer.WKT.parse(wkt);
-            // Create a geojson layer with our new geojson object
-            var thelayer = L.geoJson(geojson, {}).addTo(map);
-            // get a geojson bounding box xmin, ymin, xmax, ymax
-            var bounds = geojson.bbox();
-            // fit the map tp the bounds of the fire.
-            map.fitBounds([ [bounds[1], bounds[0]], [bounds[3], bounds[2]] ]);	
-		}else{
-			var latlong = proj4('EPSG:4326', [latitude,longitude]);
+		if (wkt = ""){
+			var latlong = proj4 ('EPSG:4326', [latitude,longitude]);
+			var latlong = latitude,longitude;
 			x = latlong[0];
 			y = latlong[1];
-			thepoint = new L.LatLng(y, x);
-			//the point already exists so lets move it.
+			thepoint = (new L.LatLng(y, x));
+		//the point already exists so lets move it.
 			marker.setLatLng(thepoint);
 			marker.addTo(map);
 			marker.update()
-			map.panTo(new L.LatLng(y, x));	
+			map.panTo(new L.LatLng(y, x));
+		}else{
+			
+            		var geojson = Terraformer.WKT.parse(wkt);
+            		// Create a geojson layer with our new geojson object
+            		var layer = L.geoJson(geojson, {}).addTo(map);
+            		// get a geojson bounding box xmin, ymin, xmax, ymax
+            		var bounds = geojson.bbox();
+            		// fit the map tp the bounds of the fire.
+            		map.fitBounds([ [bounds[1], bounds[0]], [bounds[3], bounds[2]] ]);
+			
 		};	
  };
 // initialize the map
