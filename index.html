@@ -13,45 +13,9 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td valign='top'>    
-    <div id="map" style="width: 700px; height: 700px"></div></td>
+    <div id="map" style="width: 600px; height: 600px"></div></td>
     <td valign='top'>
     <table width="209" border="0" cellspacing="1" cellpadding="1">
-  <tr>
-    <td width="50"><img src="images/BLAC-icon.png" width="25" height="41"></td>
-    <td width="543">Black Bear</td>
-  </tr>
-  <tr>
-    <td><img src="images/GRIZ-icon.png" width="25" height="41"></td>
-    <td>Grizzly Bear</td>
-  </tr>
-  <tr>
-    <td><img src="images/BEAR-icon.png" width="25" height="41"></td>
-    <td>Bear unknown species</td>
-  </tr>
-  <tr>
-    <td><img src="images/COYO-icon.png" width="25" height="41"></td>
-    <td>Coyote</td>
-  </tr>
-  <tr>
-    <td><img src="images/DEER-icon.png" width="25" height="41"></td>
-    <td>Deer</td>
-  </tr>
-  <tr>
-    <td><img src="images/GOAT-icon.png" width="25" height="41"></td>
-    <td>Goat</td>
-  </tr>
-  <tr>
-    <td><img src="images/MOOS-icon.png" width="25" height="41"></td>
-    <td>Moose</td>
-  </tr>
-  <tr>
-    <td><img src="images/SHEE-icon.png" width="25" height="41"></td>
-    <td>Sheep</td>
-  </tr>
-  <tr>
-    <td><img src="images/WOLF-icon.png" width="25" height="41"></td>
-    <td>Wolf</td>
-  </tr>
   <tr>
     <td><img src="images/marker-icon.png" width="25" height="41"></td>
     <td>All other species</td>
@@ -165,16 +129,8 @@ var baseIcon = L.Icon.extend({
 		popupAnchor:  [1, -45]
     }
 });
-var bearIcon = new baseIcon({iconUrl: 'images/BEAR-icon.png'}),
-    grizIcon = new baseIcon({iconUrl: 'images/GRIZ-icon.png'}),
-	blacIcon = new baseIcon({iconUrl: 'images/BLAC-icon.png'}),
-	goatIcon = new baseIcon({iconUrl: 'images/GOAT-icon.png'}),
-	moosIcon = new baseIcon({iconUrl: 'images/MOOS-icon.png'}),
-	sheeIcon = new baseIcon({iconUrl: 'images/SHEE-icon.png'}),
-	coyoIcon = new baseIcon({iconUrl: 'images/COYO-icon.png'}),
-	deerIcon = new baseIcon({iconUrl: 'images/DEER-icon.png'}),
+var 
 	defaultIcon = new baseIcon({iconUrl: 'images/marker-icon.png'}),
-    wolfIcon = new baseIcon({iconUrl: 'images/WOLF-icon.png'});
 /////////////////////////
 function zoomTo() {	
 		var bounds = obs.getBounds();
@@ -211,28 +167,7 @@ function loadMarkerData(){
 			////////////////////
 			switch (spp)
             {
-               case 'BEAR': obsIcon = bearIcon;
-               break;           
-               case 'BLAC': obsIcon = blacIcon;
-               break;            
-               case 'GRIZ': obsIcon = grizIcon;
-               break;          
-               case 'COYO': obsIcon = coyoIcon;
-               break;
-               case 'MOOS': obsIcon = moosIcon;
-               break;
-               case 'GOAT': obsIcon = goatIcon;
-               break;
-			   case 'SHEE': obsIcon = sheeIcon;
-               break;
-               case 'WOLF': obsIcon = wolfIcon;
-               break;
-               case 'DEER': obsIcon = deerIcon;
-               break;
-			   case 'WHIT': obsIcon = deerIcon;
-               break;
-			   case 'MULE': obsIcon = deerIcon;
-               break;
+
                default: obsIcon = defaultIcon;
             };
 			/////////////////
