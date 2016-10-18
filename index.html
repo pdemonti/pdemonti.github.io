@@ -97,9 +97,6 @@ proj4.defs([
     'EPSG:4326',
     '+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees'],
   [
-    'EPSG:26911',
-    '+proj=utm +zone=11 +ellps=GRS80 +datum=NAD83 +units=m +no_defs'],
-  [
     'EPSG:3978',
     '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs']
 	]);
@@ -111,7 +108,7 @@ proj4.defs([
 		//northing = 5667796;
 	}else{
 		//There are values in the boxes lets convert to DD and add this to the map and zoom to.
-		var latlong = proj4('EPSG:26911', 'EPSG:4326', [form.easting.value,form.northing.value]);
+		var latlong = proj4('EPSG:4326', [form.easting.value,form.northing.value]);
 		x = latlong[0];
 		y = latlong[1]; 
 	};
@@ -186,7 +183,7 @@ function loadMarkerData(){
 		for (i = 0; i < thedata.length; ++i) {
 			var arec = thedata[i];
 			//alert(arec);
-			var latlong = proj4('EPSG:26911', 'EPSG:4326', arec.split(','));
+			var latlong = proj4('EPSG:4326', arec.split(','));
 			x = latlong[0];
 			y = latlong[1];
 			//alert(latlong);
