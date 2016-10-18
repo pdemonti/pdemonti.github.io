@@ -250,7 +250,7 @@ var overlayMaps = {"Hiking Trails": trails, "Widlife Observations": obs
 L.control.layers(baseMaps,overlayMaps).addTo(map);
 L.control.mousePosition().addTo(map);
 L.control.scale().addTo(map);
-obs.on("loaded", function(e) { map.fitBounds(e.target.getBounds()); });
+//obs.on("loaded", function(e) { map.fitBounds(e.target.getBounds()); });
 //zoom to obsered records
 </script>  
 
