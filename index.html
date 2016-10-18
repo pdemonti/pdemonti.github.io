@@ -109,7 +109,7 @@ proj4.defs([
 	]);
 	///////////////////////	
 	if (form.easting.value == "") {
-		x = -124;
+		x = -124.5;
 		y = 71;
 		//easting =442072;
 		//northing = 5667796;
@@ -240,7 +240,7 @@ function loadMarkerData(){
 //////////////////
 	var map = L.map('map', {
 		center: [y,x],
-		zoom: 5,
+		zoom: 4,
 		layers: [Esri_WorldTopoMap, heatmapLayer]
 	});
 /////////////////
