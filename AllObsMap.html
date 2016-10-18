@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=9" >
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="leaflet.css" />
+    <link rel="stylesheet" href="L.Control.MousePosition.css" /> 
+</head>
+<body>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td valign='top'>    
+    <div id="map" style="width: 700px; height: 700px"></div></td>
+    <td valign='top'>
+    <table width="209" border="0" cellspacing="1" cellpadding="1">
+  <tr>
+    <td width="50"><img src="images/BLAC-icon.png" width="25" height="41"></td>
+    <td width="543">Black Bear</td>
+  </tr>
+  <tr>
+    <td><img src="images/GRIZ-icon.png" width="25" height="41"></td>
+    <td>Grizzly Bear</td>
+  </tr>
+  <tr>
+    <td><img src="images/BEAR-icon.png" width="25" height="41"></td>
+    <td>Bear unknown species</td>
+  </tr>
+  <tr>
+    <td><img src="images/COYO-icon.png" width="25" height="41"></td>
+    <td>Coyote</td>
+  </tr>
+  <tr>
+    <td><img src="images/DEER-icon.png" width="25" height="41"></td>
+    <td>Deer</td>
+  </tr>
+  <tr>
+    <td><img src="images/GOAT-icon.png" width="25" height="41"></td>
+    <td>Goat</td>
+  </tr>
+  <tr>
+    <td><img src="images/MOOS-icon.png" width="25" height="41"></td>
+    <td>Moose</td>
+  </tr>
+  <tr>
+    <td><img src="images/SHEE-icon.png" width="25" height="41"></td>
+    <td>Sheep</td>
+  </tr>
+  <tr>
+    <td><img src="images/WOLF-icon.png" width="25" height="41"></td>
+    <td>Wolf</td>
+  </tr>
+  <tr>
+    <td><img src="images/marker-icon.png" width="25" height="41"></td>
+    <td>All other species</td>
+  </tr>
+</table>
+    </td>
+  </tr>
+</table>
+ <form name="form" method="get" action="">
+ <input name="easting" type="hidden" id="easting" value="">
+     <input type="hidden"  name="northing" id="northing" value="">
+     <input name="data" type="hidden" id="data" value="">
+     <input type="hidden"  name="msg" id="msg" value="">
+     <input type="hidden"  name="counts" id="counts" value="">
+ 	<input type="submit" name="z2obs" id="z2obs" value="Download as KML" onclick="saveToKML();">
+ </form>
+<script src="leaflet-src.js"></script>
+<script src="proj4.js"></script>
+<script src="proj4leaflet.js"></script>
+<script src="L.Control.MousePosition.js"></script>
+<script src="kml.js"></script>
+<script src="leaflet-providers.js"></script>
+<script src="heatmap.js"></script>
+<script src="leaflet-heatmap.js"></script>
+<script>
+var testData = {
+  max: 8,
+  data: [{lat: 51.332, lng:-117.4, count: 2},{lat: 51.349, lng:-117.4, count: 1}]
+};
+var cfg = {
+  // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+  // if scaleRadius is false it will be the constant radius used in pixels
+  "radius": 0.02,
+  "maxOpacity": .8, 
+  // scales the radius based on map zoom
+  "scaleRadius": true, 
+  // if set to false the heatmap uses the global maximum for colorization
+  // if activated: uses the data maximum within the current map boundaries 
+  //   (there will always be a red spot with useLocalExtremas true)
+  "useLocalExtrema": false,
+  // which field name in your data represents the latitude - default "lat"
+  latField: 'lat',
+  // which field name in your data represents the longitude - default "lng"
+  lngField: 'lng',
+  // which field name in your data represents the data value - default "value"
+  valueField: 'count'
+};
+var heatmapLayer = new HeatmapOverlay(cfg);
+var easting;
+var northing;
+var msg;
+var iconDrag = true;
+var marker; 
+var thepoint;
+var theProjPnts;
+///////////////////////////// 
+proj4.defs([
+  [
+    'EPSG:4326',
+    '+title=WGS 84 (long/lat) +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees'],
+  [
+    'EPSG:26911',
+    '+proj=utm +zone=11 +ellps=GRS80 +datum=NAD83 +units=m +no_defs'],
+  [
+    'EPSG:3978',
+    '+proj=lcc +lat_1=49 +lat_2=77 +lat_0=49 +lon_0=-95 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs']
+	]);
+	///////////////////////	
+	if (form.easting.value == "") {
+		x = -117.4;
+		y = 51.242;
+		//easting =442072;
+		//northing = 5667796;
+	}else{
+		//There are values in the boxes lets convert to DD and add this to the map and zoom to.
+		var latlong = proj4('EPSG:26911', 'EPSG:4326', [form.easting.value,form.northing.value]);
+		x = latlong[0];
+		y = latlong[1]; 
+	};
+	/////////////////define map layers
+	// Toporama WMS
+	var Toporama = L.tileLayer.wms("http://wms.ess-ws.nrcan.gc.ca/wms/toporama_en", {
+		layers: 'WMS-toporama',
+		format: 'image/png',
+		transparent: false,
+		noWrap: true,
+		attribution: "Toporama"
+	});
+// define a maplayer
+var Esri_WorldTopoMap = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri '
+});
+var NatGeoTopo = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri ',
+	maxZoom: 16
+});
+// https: also suppported.
+var Esri_WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri '
+});
+//// define KML layer
+var trails = new L.KML("hike.kml", {async: true});
+var obs = new L.LayerGroup();
+//define marker
+//define markers
+var obsIcon;
+var baseIcon = L.Icon.extend({
+    options: {
+        //iconUrl: 'marker-icon.png',
+		//shadowUrl: 'marker-icon-shadow.png',
+		iconSize:     [25, 41],
+		shadowSize:   [50, 64],
+		iconAnchor:   [12, 40],
+		shadowAnchor: [12, 40],
+		popupAnchor:  [1, -45]
+    }
+});
+var bearIcon = new baseIcon({iconUrl: 'images/BEAR-icon.png'}),
+    grizIcon = new baseIcon({iconUrl: 'images/GRIZ-icon.png'}),
+	blacIcon = new baseIcon({iconUrl: 'images/BLAC-icon.png'}),
+	goatIcon = new baseIcon({iconUrl: 'images/GOAT-icon.png'}),
+	moosIcon = new baseIcon({iconUrl: 'images/MOOS-icon.png'}),
+	sheeIcon = new baseIcon({iconUrl: 'images/SHEE-icon.png'}),
+	coyoIcon = new baseIcon({iconUrl: 'images/COYO-icon.png'}),
+	deerIcon = new baseIcon({iconUrl: 'images/DEER-icon.png'}),
+	defaultIcon = new baseIcon({iconUrl: 'images/marker-icon.png'}),
+    wolfIcon = new baseIcon({iconUrl: 'images/WOLF-icon.png'});
+/////////////////////////
+function zoomTo() {	
+		var bounds = obs.getBounds();
+		map.fitBounds(bounds);
+};
+function clearMarkers() {	
+	obs.clearLayers(map);
+};
+
+/////////////////////////////////////////
+var points = [];
+function loadMarkerData(){
+	var points = [];
+		/// get the new coords from the boxes
+		counts = form.counts.value;
+		counts = counts.split(',');	
+		data = form.data.value;
+		msg = form.msg.value;
+		msg = msg.split(',');
+		///for each data value pair reproject them then add to new string
+		theProjPnts = "";
+		//alert(data);
+		var thedata = data.split("#");
+		//
+		for (i = 0; i < thedata.length; ++i) {
+			var arec = thedata[i];
+			//alert(arec);
+			var latlong = proj4('EPSG:26911', 'EPSG:4326', arec.split(','));
+			x = latlong[0];
+			y = latlong[1];
+			//alert(latlong);
+			var spp = msg[i].substring(0, 4);
+			thepoint =new L.LatLng(y, x);
+			////////////////////
+			switch (spp)
+            {
+               case 'BEAR': obsIcon = bearIcon;
+               break;           
+               case 'BLAC': obsIcon = blacIcon;
+               break;            
+               case 'GRIZ': obsIcon = grizIcon;
+               break;          
+               case 'COYO': obsIcon = coyoIcon;
+               break;
+               case 'MOOS': obsIcon = moosIcon;
+               break;
+               case 'GOAT': obsIcon = goatIcon;
+               break;
+			   case 'SHEE': obsIcon = sheeIcon;
+               break;
+               case 'WOLF': obsIcon = wolfIcon;
+               break;
+               case 'DEER': obsIcon = deerIcon;
+               break;
+			   case 'WHIT': obsIcon = deerIcon;
+               break;
+			   case 'MULE': obsIcon = deerIcon;
+               break;
+               default: obsIcon = defaultIcon;
+            };
+			/////////////////
+			marker = new L.marker(thepoint, {icon: obsIcon}).bindPopup(msg[i]);	
+			marker.addTo(obs); 
+				var point = {
+				lng: x,
+				lat: y,
+				count: counts[i]
+			    };
+			  points.push(point);
+		};
+		var realData = {max: 8, data: points};
+		heatmapLayer.setData(realData);
+};
+//////////////////
+	var map = L.map('map', {
+		center: [y,x],
+		zoom: 7,
+		layers: [Esri_WorldTopoMap, heatmapLayer]
+	});
+/////////////////
+
+heatmapLayer.setData(testData);
+/////////////////
+var baseMaps = {
+    "Toporama": Toporama,
+	"NatGeoTopo": NatGeoTopo,
+	"Satellite": Esri_WorldImagery,
+	"Esri_Topo": Esri_WorldTopoMap
+};
+var overlayMaps = {"Hiking Trails": trails, "HeatMap": heatmapLayer, "Widlife Observations": obs
+};
+
+L.control.layers(baseMaps,overlayMaps).addTo(map);
+L.control.mousePosition().addTo(map);
+L.control.scale().addTo(map);
+//obs.on("loaded", function(e) { map.fitBounds(e.target.getBounds()); });
+//zoom to obsered records
+</script>  
+
+
+</body>
+</html>
