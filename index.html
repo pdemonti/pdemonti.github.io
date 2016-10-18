@@ -74,8 +74,6 @@
 <script src="L.Control.MousePosition.js"></script>
 <script src="kml.js"></script>
 <script src="leaflet-providers.js"></script>
-<script src="heatmap.js"></script>
-<script src="leaflet-heatmap.js"></script>
 <script>
 var testData = {
   max: 8,
@@ -99,7 +97,6 @@ var cfg = {
   // which field name in your data represents the data value - default "value"
   valueField: 'count'
 };
-var heatmapLayer = new HeatmapOverlay(cfg);
 var easting;
 var northing;
 var msg;
@@ -250,17 +247,14 @@ function loadMarkerData(){
 			  points.push(point);
 		};
 		var realData = {max: 8, data: points};
-		heatmapLayer.setData(realData);
 };
 //////////////////
 	var map = L.map('map', {
 		center: [y,x],
 		zoom: 7,
-		layers: [Esri_WorldTopoMap, heatmapLayer]
+		layers: [Esri_WorldTopoMap]
 	});
-/////////////////
 
-heatmapLayer.setData(testData);
 /////////////////
 var baseMaps = {
     "Toporama": Toporama,
@@ -268,7 +262,7 @@ var baseMaps = {
 	"Satellite": Esri_WorldImagery,
 	"Esri_Topo": Esri_WorldTopoMap
 };
-var overlayMaps = {"Hiking Trails": trails, "HeatMap": heatmapLayer, "Widlife Observations": obs
+var overlayMaps = {"Widlife Observations": obs
 };
 
 L.control.layers(baseMaps,overlayMaps).addTo(map);
