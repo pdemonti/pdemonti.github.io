@@ -17,29 +17,8 @@
     <td valign='top'>
     <table width="209" border="0" cellspacing="1" cellpadding="1">
   <tr>
-    <td width="50"><img src="images/marker_blue.png" width="30" height="30"></td>
-    <td width="543">Bear</td>
-  </tr>
-  <tr>
-    <td><img src="images/marker_red.png" width="30" height="30"></td>
-    <td>Cariobu</td>
-  </tr>
-  <tr>
-    <td><img src="images/marker_orange.png" width="30" height="30"></td>
-    <td>Muskox</td>
-  </tr>
-  <tr>
-    <td><img src="images/marker_green.png" width="30" height="30"></td>
-    <td>Sheep</td>
-  </tr>
-  <tr>
-    <td><img src="images/marker_yellow.png" width="30" height="30"></td>
-    <td>Wolf</td>
-  </tr>
-  <tr>
-    <td><img src="images/marker_gray.png" width="30" height="30"></td>
-    <td>All other species</td>
-  </tr>
+    <td width="50"><img src="images/marker-icon.png" width="25" height="41"></td>
+    <td width="543">Wildlife Observation</td>
 </table>
     </td>
   </tr>
@@ -153,12 +132,7 @@ var baseIcon = L.Icon.extend({
 		popupAnchor:  [1, -45]
     }
 });
-var bearIcon = new baseIcon({iconUrl: 'images/marker_blue.png'}),
-    caribouIcon = new baseIcon({iconUrl: 'images/marker_red.png'}),
-	muskoxIcon = new baseIcon({iconUrl: 'images/marker-icon.png'}),
-	sheepIcon = new baseIcon({iconUrl: 'images/marker_green.png'}),
-	wolfIcon = new baseIcon({iconUrl: 'images/marker_yellow.png'}),
-	defaultIcon = new baseIcon({iconUrl: 'images/marker_gray.png'});
+var defaultIcon = new baseIcon({iconUrl: 'images/marker-icon.png'});
 /////////////////////////
 function zoomTo() {	
 		var bounds = obs.getBounds();
@@ -195,24 +169,6 @@ function loadMarkerData(){
 			////////////////////
 			switch (spp)
             {
-               case 'Grizzly Bear': obsIcon = bearIcon;
-               break;           
-               case 'Black Bear': obsIcon = bearIcon;
-               break;        
-               case 'Polar Bear': obsIcon = bearIcon;
-               break;   			    
-               case 'Bluenose Caribou': obsIcon = caribouIcon;
-               break;          
-               case 'Peary Caribou': obsIcon = caribouIcon;
-               break;
-               case 'Porcupine Caribou': obsIcon = caibouIcon;
-               break;
-               case 'Muskox': obsIcon = muskoxIcon;
-               break;
-		case 'Dalls Sheep': obsIcon = sheepIcon;
-               break;
-               case 'Wolf': obsIcon = wolfIcon;
-               break;
                default: obsIcon = defaultIcon;
             };
 			/////////////////
