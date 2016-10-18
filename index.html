@@ -37,7 +37,7 @@
     <td>Wolf</td>
   </tr>
   <tr>
-    <td><img src="images/marker_gray.png" width="30" height="30"></td>
+    <td><img src="images/marker_gray.png" width="25" height="41"></td>
     <td>All other species</td>
   </tr>
 </table>
@@ -244,7 +244,7 @@ var baseMaps = {
 	"Satellite": Esri_WorldImagery,
 	"Esri_Topo": Esri_WorldTopoMap
 };
-var overlayMaps = {"Hiking Trails": trails, "Widlife Observations": obs
+var overlayMaps = {"Hiking Trails": trails, "HeatMap": heatmapLayer, "Widlife Observations": obs
 };
 
 L.control.layers(baseMaps,overlayMaps).addTo(map);
