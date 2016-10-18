@@ -109,8 +109,8 @@ proj4.defs([
 	]);
 	///////////////////////	
 	if (form.easting.value == "") {
-		x = -139.6;
-		y = 69.1;
+		x = -124;
+		y = 71;
 		//easting =442072;
 		//northing = 5667796;
 	}else{
@@ -158,15 +158,12 @@ var baseIcon = L.Icon.extend({
     }
 });
 var bearIcon = new baseIcon({iconUrl: 'images/marker_blue.png'}),
-    grizIcon = new baseIcon({iconUrl: 'images/marker_orange.png'}),
-	blacIcon = new baseIcon({iconUrl: 'images/BLAC-icon.png'}),
-	goatIcon = new baseIcon({iconUrl: 'images/GOAT-icon.png'}),
-	moosIcon = new baseIcon({iconUrl: 'images/MOOS-icon.png'}),
-	sheeIcon = new baseIcon({iconUrl: 'images/SHEE-icon.png'}),
-	coyoIcon = new baseIcon({iconUrl: 'images/COYO-icon.png'}),
-	deerIcon = new baseIcon({iconUrl: 'images/DEER-icon.png'}),
-	defaultIcon = new baseIcon({iconUrl: 'images/marker-icon.png'}),
-    wolfIcon = new baseIcon({iconUrl: 'images/WOLF-icon.png'});
+    caribouIcon = new baseIcon({iconUrl: 'images/marker_red.png'}),
+	muskoxIcon = new baseIcon({iconUrl: 'images/marker_orange.png'}),
+	sheepIcon = new baseIcon({iconUrl: 'images/marker_green.png'}),
+	wolfIcon = new baseIcon({iconUrl: 'images/marker_yellow.png'}),
+	defaultIcon = new baseIcon({iconUrl: 'images/marker_gray.png'}),
+    wolverineIcon = new baseIcon({iconUrl: 'images/marker_purple.png'});
 /////////////////////////
 function zoomTo() {	
 		var bounds = obs.getBounds();
@@ -243,7 +240,7 @@ function loadMarkerData(){
 //////////////////
 	var map = L.map('map', {
 		center: [y,x],
-		zoom: 8,
+		zoom: 11,
 		layers: [Esri_WorldTopoMap, heatmapLayer]
 	});
 /////////////////
