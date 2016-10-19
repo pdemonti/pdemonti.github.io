@@ -132,7 +132,7 @@ function loadMarkerData(){
 		for (i = 0; i < thedata.length; ++i) {
 			var arec = thedata[i];
 			//alert(arec);
-			var latlong = proj4('EPSG:4326', [position.lat, position.lng]);
+			var latlong = proj4('EPSG:4326', arec.split(','));
 			x = latlong[0];
 			y = latlong[1];
 			//alert(latlong);
