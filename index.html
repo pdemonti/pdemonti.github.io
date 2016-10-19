@@ -38,9 +38,32 @@
 <script src="L.Control.MousePosition.js"></script>
 <script src="kml.js"></script>
 <script src="leaflet-providers.js"></script>
-<script src="kml.js"></script>
+<script src="heatmap.js"></script>
+<script src="leaflet-heatmap.js"></script>
 <script>
-
+var testData = {
+  max: 8,
+  data: [{lat: 51.332, lng:-117.4, count: 2},{lat: 51.349, lng:-117.4, count: 1}]
+};
+var cfg = {
+  // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+  // if scaleRadius is false it will be the constant radius used in pixels
+  "radius": 0.02,
+  "maxOpacity": .8, 
+  // scales the radius based on map zoom
+  "scaleRadius": true, 
+  // if set to false the heatmap uses the global maximum for colorization
+  // if activated: uses the data maximum within the current map boundaries 
+  //   (there will always be a red spot with useLocalExtremas true)
+  "useLocalExtrema": false,
+  // which field name in your data represents the latitude - default "lat"
+  latField: 'lat',
+  // which field name in your data represents the longitude - default "lng"
+  lngField: 'lng',
+  // which field name in your data represents the data value - default "value"
+  valueField: 'count'
+};
+var heatmapLayer = new HeatmapOverlay(cfg);
 var latitude;
 var longitude;
 var msg;
@@ -155,6 +178,7 @@ function loadMarkerData(){
 			  points.push(point);
 		};
 		var realData = {max: 8, data: points};
+		heatmapLayer.setData(realData);
 };
 //////////////////
 	var map = L.map('map', {
@@ -169,7 +193,7 @@ var baseMaps = {
 	"Satellite": Esri_WorldImagery,
 	"Esri_Topo": Esri_WorldTopoMap
 };
-var overlayMaps = {"Widlife Observations": obs
+var overlayMaps = {"HeatMap": heatmapLayer,"Widlife Observations": obs
 };
 L.control.layers(baseMaps,overlayMaps).addTo(map);
 L.control.mousePosition().addTo(map);
